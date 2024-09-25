@@ -7,11 +7,11 @@ const validator = require('validator'); // Import the validator library for emai
 require('dotenv').config();
 
 exports.createUser = async (req, res) => {
-    const { firstname, lastname, email, password, confirmPassword, phone, role, status } = req.body;
+    const { email, password, confirmPassword, role } = req.body;
 
     // Validate required fields
-    if (!firstname || !lastname || !email || !password || !role || !status) {
-        return res.status(400).json({ error: 'All required fields must be provided.' });
+    if (!email || !password || !role) {
+        return res.status(400).json({ error: 'Email, password, and role are required.' });
     }
 
     // Validate email format
@@ -41,16 +41,20 @@ exports.createUser = async (req, res) => {
 
         // Create new user
         const newUser = await User.create({
-            firstname,
-            lastname,
             email,
             password: hashedPassword, // Store the hashed password
-            phone,
             role,
-            status,
+            verified: false, // Set default value for verified
+            verification_token: null, // Initialize verification_token
         });
 
-        res.status(201).json(newUser);
+        res.status(201).json({
+            id: newUser.id,
+            email: newUser.email,
+            role: newUser.role,
+            created_at: newUser.created_at,
+            updated_at: newUser.updated_at,
+        });
     } catch (err) {
         console.error('Sequelize error:', err);
         if (err instanceof ValidationError) {
@@ -88,15 +92,13 @@ exports.loginUser = async (req, res) => {
         res.status(200).json({
             user: {
                 id: user.id,
-                firstname: user.firstname,
-                lastname: user.lastname,
                 email: user.email,
-                phone: user.phone,
                 role: user.role,
-                status: user.status,
+                verified: user.verified,
+                created_at: user.created_at,
+                updated_at: user.updated_at,
                 token
             }
-            
         });
     } catch (err) {
         console.error('Sequelize error:', err);

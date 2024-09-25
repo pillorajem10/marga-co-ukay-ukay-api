@@ -9,14 +9,6 @@ User.init({
         autoIncrement: true,
         primaryKey: true,
     },
-    firstname: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    lastname: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -26,36 +18,36 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false,
     },
-    phone: {
+    role: {
+        type: DataTypes.STRING, // Changed to simple string type
+        allowNull: false,
+        defaultValue: 'user', // Default value set to 'user'
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    },
+    verified: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
+    verification_token: {
         type: DataTypes.STRING,
         allowNull: true,
-    },
-    role: {
-        type: DataTypes.ENUM('admin', 'user', 'ukay_shop_owner'),
-        allowNull: false,
-    },
-    status: {
-        type: DataTypes.ENUM('active', 'inactive', 'pending_approval'),
-        allowNull: false,
-    },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-        field: 'created_at', // This maps to the snake_case column name
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-        field: 'updated_at', // This maps to the snake_case column name
     },
 }, {
     sequelize,
     modelName: 'User',
     tableName: 'users',
     timestamps: false,
-    underscored: true, // This option tells Sequelize to use snake_case column names
+    underscored: true,
 });
 
 module.exports = User;
