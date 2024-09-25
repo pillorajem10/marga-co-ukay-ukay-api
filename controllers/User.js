@@ -1,8 +1,16 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs'); // Change to bcryptjs
 const jwt = require('jsonwebtoken');
 const { ValidationError } = require('sequelize');
 const User = require('../models/User'); // Import your User model
 const validator = require('validator'); // Import the validator library for email validation
+
+const {
+    sendError,
+    sendSuccess,
+    convertMomentWithFormat,
+    getToken,
+    sendErrorUnauthorized,
+  } = require("../utils/methods");
 
 require('dotenv').config();
 
@@ -89,17 +97,7 @@ exports.loginUser = async (req, res) => {
         const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         // Send the response with user details and token
-        res.status(200).json({
-            user: {
-                id: user.id,
-                email: user.email,
-                role: user.role,
-                verified: user.verified,
-                created_at: user.created_at,
-                updated_at: user.updated_at,
-                token
-            }
-        });
+        return sendSuccess(res, { token });
     } catch (err) {
         console.error('Sequelize error:', err);
         res.status(500).json({ error: 'Internal server error.' });
